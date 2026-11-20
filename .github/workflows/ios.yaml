@@ -1,4 +1,6 @@
+
 name: CI
+
 on:
   push:
     branches:
@@ -13,27 +15,34 @@ jobs:
   build_ios_without_signing:
     name: Build Flutter (iOS) Without Signing
     runs-on: macos-latest
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Setup Flutter
-        uses: subosito/flutter-action@v1
+        uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
-      - run: flutter pub get
-      # Zip into IPA from here:
-      # https://gist.github.com/devhammed/617d920b7ee886591a46c22633ab0093
-      - name: Build Flutter IPA
+          channel: stable
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Flutter iOS
+        run: flutter build ios --release --no-codesign
+
+      - name: Package unsigned IPA
         run: |
-          flutter build ios --release --no-codesign
+          mkdir -p build/ios/iphoneos/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ios/iphoneos/Payload/
           cd build/ios/iphoneos
-          mkdir Payload
-          cd Payload
-          ln -s ../Runner.app
-          cd ..
           zip -r bookadapt_unsigned.ipa Payload
+
       - name: Upload IPA
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ios_ipa
-          path: build/ios/iphoneos/*.ipa
+          path: build/ios/iphoneos/bookadapt_unsigned.ipa
+          if-no-files-found: error
+          retention-days: 7
