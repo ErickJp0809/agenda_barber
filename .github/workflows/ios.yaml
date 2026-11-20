@@ -1,0 +1,39 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+      - release
+  pull_request:
+    branches:
+      - main
+      - release
+
+jobs:
+  build_ios_without_signing:
+    name: Build Flutter (iOS) Without Signing
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - run: flutter pub get
+      # Zip into IPA from here:
+      # https://gist.github.com/devhammed/617d920b7ee886591a46c22633ab0093
+      - name: Build Flutter IPA
+        run: |
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r bookadapt_unsigned.ipa Payload
+      - name: Upload IPA
+        uses: actions/upload-artifact@v2
+        with:
+          name: ios_ipa
+          path: build/ios/iphoneos/*.ipa

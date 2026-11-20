@@ -1,0 +1,8 @@
+{
+  "usuarios": [
+    {
+      "usuario": "j12345",
+      "passwordHash": "$2a$10$kCuNmmxHPwUORF3HQKeutOhO/cFuOF3f2mrmmrU3BEOlqJZiDV1uy"
+    }
+  ]
+}
