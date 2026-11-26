@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:agenda_barber/main.dart';
+import 'package:agenda_barber/tema.dart';
 import 'dart:convert';
 
 class MiLogin extends StatefulWidget {
@@ -128,6 +129,7 @@ class _MiLoginState extends State<MiLogin> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: temaApp,
 
       home: Builder(
         builder: (BuildContext pantallaContext) {
